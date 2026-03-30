@@ -298,16 +298,42 @@ function UsersTab() {
                                             </button>
                                         ))}
                                     {/* Block/Unblock */}
-                                    {(u.email !== sessionStorage.getItem('user-email')) && u.isBlocked ? (
-                                        <button onClick={() => handleUnblock(u._id)}
-                                            style={{ padding: '6px 12px', borderRadius: 8, border: 'none', background: '#10b981', color: '#fff', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
-                                            Unblock
-                                        </button>
-                                    ) : (
-                                        <button onClick={() => setShowBlockInput(showBlockInput === u._id ? null : u._id)}
-                                            style={{ padding: '6px 12px', borderRadius: 8, border: 'none', background: '#f59e0b', color: '#000', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
-                                            Block
-                                        </button>
+                                    {u.email !== sessionStorage.getItem('user-email') && (
+                                        u.isBlocked ? (
+                                            <button
+                                                onClick={() => handleUnblock(u._id)}
+                                                style={{
+                                                    padding: '6px 12px',
+                                                    borderRadius: 8,
+                                                    border: 'none',
+                                                    background: '#10b981',
+                                                    color: '#fff',
+                                                    cursor: 'pointer',
+                                                    fontSize: 12,
+                                                    fontWeight: 600
+                                                }}
+                                            >
+                                                Unblock
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() =>
+                                                    setShowBlockInput(showBlockInput === u._id ? null : u._id)
+                                                }
+                                                style={{
+                                                    padding: '6px 12px',
+                                                    borderRadius: 8,
+                                                    border: 'none',
+                                                    background: '#f59e0b',
+                                                    color: '#000',
+                                                    cursor: 'pointer',
+                                                    fontSize: 12,
+                                                    fontWeight: 600
+                                                }}
+                                            >
+                                                Block
+                                            </button>
+                                        )
                                     )}
                                     {/* Delete */}
                                     {u.role !== 'admin' && (
