@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
@@ -45,7 +45,7 @@ export default function PollDetailPage() {
       }
     };
     fetch();
-  }, [id]);
+  }, [id, navigate]);
 
   // Socket room
   useEffect(() => {

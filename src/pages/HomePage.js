@@ -104,13 +104,13 @@ export default function HomePage() {
     }
   };
 
-  useEffect(() => { fetchPolls(); }, [page, category, status, search]);
+  useEffect(() => { fetchPolls(); }, [page, fetchPolls, category, status, search]);
 
   useEffect(() => {
     if (!socket) return;
     socket.on('new_poll_available', () => { fetchPolls(); toast('📊 New poll available!'); });
     return () => socket.off('new_poll_available');
-  }, [socket]);
+  }, [socket, fetchPolls]);
 
   return (
     <div className="page">

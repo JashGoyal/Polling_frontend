@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, fetchMe]);
 
   const fetchMe = async () => {
     try {
