@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { pollAPI } from '../utils/api';
 import { useSocket } from '../context/SocketContext';
@@ -91,18 +91,23 @@ export default function HomePage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchPolls = async () => {
-    setLoading(true);
-    try {
-      const { data } = await pollAPI.getAll({ page, category: category !== 'all' ? category : '', status, search });
-      setPolls(data.polls);
-      setTotalPages(data.pagination.pages);
-    } catch {
-      toast.error('Failed to load polls');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchPolls = useCallback(async () => {
+  setLoading(true);
+  try {
+    const { data } = await pollAPI.getAll({
+      page,
+      category: category !== 'all' ? category : '',
+      status,
+      search
+    });
+    setPolls(data.polls);
+    setTotalPages(data.pagination.pages);
+  } catch {
+    toast.error('Failed to load polls');
+  } finally {
+    setLoading(false);
+  }
+}, [page, category, status, search]);
 
   useEffect(() => { fetchPolls(); }, [page, fetchPolls, category, status, search]);
 
