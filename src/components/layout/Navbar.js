@@ -8,18 +8,33 @@ export default function Navbar() {
   const [dropOpen, setDropOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const dropRef = useRef();
-  const menuRef = useRef();
+  const hamburgerRef = useRef();
+  const mobileMenuRef = useRef();
 
   useEffect(() => {
     const handler = (e) => {
-      if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false);
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+      // Close avatar dropdown if clicked outside
+      if (dropRef.current && !dropRef.current.contains(e.target)) {
+        setDropOpen(false);
+      }
+      // Close mobile menu only if clicked outside BOTH the hamburger AND the mobile menu
+      if (
+        hamburgerRef.current && !hamburgerRef.current.contains(e.target) &&
+        mobileMenuRef.current && !mobileMenuRef.current.contains(e.target)
+      ) {
+        setMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleLogout = () => { logout(); navigate('/login'); };
+  const handleLogout = () => {
+    setMenuOpen(false);
+    logout();
+    navigate('/login');
+  };
+
   const closeMenu = () => setMenuOpen(false);
 
   const navLinkClass = ({ isActive }) => `navbar-link${isActive ? ' active' : ''}`;
@@ -87,8 +102,10 @@ export default function Navbar() {
           font-size: 15px;
           font-weight: 500;
           transition: background 0.15s, color 0.15s;
+          -webkit-tap-highlight-color: transparent;
         }
-        .mobile-nav-link:hover, .mobile-nav-link.active {
+        .mobile-nav-link:hover,
+        .mobile-nav-link.active {
           background: rgba(99,102,241,0.12);
           color: #a5b4fc;
         }
@@ -187,28 +204,29 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Hamburger (mobile only) */}
-            <div ref={menuRef}>
-              <button
-                className={`hamburger${menuOpen ? ' open' : ''}`}
-                onClick={() => setMenuOpen(!menuOpen)}
-                aria-label="Toggle menu"
-              >
-                <span />
-                <span />
-                <span />
-              </button>
-            </div>
+            {/* Hamburger button (mobile only) */}
+            <button
+              ref={hamburgerRef}
+              className={`hamburger${menuOpen ? ' open' : ''}`}
+              onClick={() => setMenuOpen(prev => !prev)}
+              aria-label="Toggle menu"
+            >
+              <span />
+              <span />
+              <span />
+            </button>
           </div>
         </div>
       </nav>
 
-      {/* Mobile dropdown menu */}
-      <div className={`mobile-menu${menuOpen ? ' open' : ''}`}>
+      {/* Mobile dropdown menu — has its own ref separate from hamburger */}
+      <div ref={mobileMenuRef} className={`mobile-menu${menuOpen ? ' open' : ''}`}>
         <div className="mobile-user-info">
           {user?.avatar
             ? <img src={user.avatar} alt={user.name} style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
-            : <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,#6366f1,#a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{user?.name?.[0]?.toUpperCase()}</div>
+            : <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,#6366f1,#a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>
+                {user?.name?.[0]?.toUpperCase()}
+              </div>
           }
           <div>
             <div className="mobile-user-name">{user?.name}</div>
@@ -218,10 +236,18 @@ export default function Navbar() {
 
         <div className="mobile-divider" />
 
-        <NavLink to="/" className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`} end onClick={closeMenu}>🏠 Home</NavLink>
-        <NavLink to="/create-poll" className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`} onClick={closeMenu}>➕ Create Poll</NavLink>
-        <NavLink to="/dashboard" className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`} onClick={closeMenu}>📊 Dashboard</NavLink>
-        <NavLink to="/profile" className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`} onClick={closeMenu}>👤 Profile</NavLink>
+        <NavLink to="/" className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`} end onClick={closeMenu}>
+          🏠 Home
+        </NavLink>
+        <NavLink to="/create-poll" className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`} onClick={closeMenu}>
+          ➕ Create Poll
+        </NavLink>
+        <NavLink to="/dashboard" className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`} onClick={closeMenu}>
+          📊 Dashboard
+        </NavLink>
+        <NavLink to="/profile" className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`} onClick={closeMenu}>
+          👤 Profile
+        </NavLink>
         {user?.role === 'admin' && (
           <NavLink to="/admin" className={({ isActive }) => `mobile-nav-link${isActive ? ' active' : ''}`} onClick={closeMenu}
             style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)' }}>
@@ -231,12 +257,15 @@ export default function Navbar() {
 
         <div className="mobile-divider" />
 
-        <button onClick={() => { handleLogout(); closeMenu(); }} style={{
-          display: 'flex', alignItems: 'center', width: '100%', padding: '12px 16px',
-          borderRadius: 10, border: 'none', background: 'rgba(239,68,68,0.08)',
-          color: '#f87171', cursor: 'pointer', fontSize: 15, fontWeight: 500,
-          fontFamily: 'inherit', textAlign: 'left', gap: 8,
-        }}>
+        <button
+          onClick={handleLogout}
+          style={{
+            display: 'flex', alignItems: 'center', width: '100%', padding: '12px 16px',
+            borderRadius: 10, border: 'none', background: 'rgba(239,68,68,0.08)',
+            color: '#f87171', cursor: 'pointer', fontSize: 15, fontWeight: 500,
+            fontFamily: 'inherit', textAlign: 'left', gap: 8,
+          }}
+        >
           🚪 Logout
         </button>
       </div>
