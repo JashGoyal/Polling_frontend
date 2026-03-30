@@ -298,7 +298,7 @@ function UsersTab() {
                                             </button>
                                         ))}
                                     {/* Block/Unblock */}
-                                    {u.isBlocked ? (
+                                    {(u.email !== sessionStorage.getItem('user-email')) && u.isBlocked ? (
                                         <button onClick={() => handleUnblock(u._id)}
                                             style={{ padding: '6px 12px', borderRadius: 8, border: 'none', background: '#10b981', color: '#fff', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
                                             Unblock
