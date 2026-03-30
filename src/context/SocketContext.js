@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext';
 
 const SocketContext = createContext();
 
-const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+const SOCKET_URL = process.env.REACT_APP_SOCKET_URL ;
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
